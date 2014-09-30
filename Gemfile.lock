@@ -1,0 +1,26 @@
+PATH
+  remote: .
+  specs:
+    factor-connector-ssh (0.0.1)
+      factor-connector-api (~> 0.0.1)
+      net-scp (= 1.1.2)
+      net-sftp (= 2.1.2)
+      net-ssh (= 2.7.0)
+      sshkey (= 1.6.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    factor-connector-api (0.0.1)
+    net-scp (1.1.2)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.7.0)
+    sshkey (1.6.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  factor-connector-ssh!
