@@ -158,7 +158,7 @@ Factor::Connector.service 'ssh' do
           end
         end
       end
-    rescue Factor::Channel::Error
+    rescue Factor::Connector::Error
       raise
     rescue => ex
       fail "Couldn't connect to the server #{user}@#{host}:#{port || '22'}, please check credentials.", exception:ex
