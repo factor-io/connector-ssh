@@ -1,7 +1,6 @@
 require 'factor-connector-api'
 require 'net/ssh'
 require 'net/scp'
-require 'net/sftp'
 require 'tempfile'
 require 'securerandom'
 require 'uri'
