@@ -36,7 +36,7 @@ Factor::Connector.service 'ssh' do
       fail "Couldn't parse input parameters", exception: ex
     end
 
-    ssh_settings = { keys: [key_file.path] }
+    ssh_settings = { keys: [key_file.path], paranoid: false }
     ssh_settings[:port] = port if port
 
     fail 'User (user) is required in host address' unless user
@@ -115,7 +115,7 @@ Factor::Connector.service 'ssh' do
       port      = uri.port || params['port']
       user      = uri.user || params['username']
 
-      ssh_settings = { keys: [key_file.path] }
+      ssh_settings = { keys: [key_file.path], paranoid: false }
       ssh_settings[:port] = port if port
     rescue
       fail "couldn't parse input parameters"
