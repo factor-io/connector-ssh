@@ -5,6 +5,46 @@ require 'tempfile'
 require 'securerandom'
 require 'uri'
 
+class Net::SSH::Connection::Session
+  class CommandExecutionFailed < StandardError
+  end
+
+  def exec_sc!(command)
+    stdout_data,stderr_data = "",""
+    exit_code,exit_signal = nil,nil
+    self.open_channel do |channel|
+      channel.exec(command) do |_, success|
+        raise CommandExecutionFailed, "Command \"#{command}\" was unable to execute" unless success
+
+        channel.on_data do |_,data|
+          stdout_data += data
+        end
+
+        channel.on_extended_data do |_,_,data|
+          stderr_data += data
+        end
+
+        channel.on_request("exit-status") do |_,data|
+          exit_code = data.read_long
+        end
+
+        channel.on_request("exit-signal") do |_, data|
+          exit_signal = data.read_long
+        end
+      end
+    end
+    self.loop
+
+    {
+      stdout:stdout_data,
+      stderr:stderr_data,
+      exit_code:exit_code,
+      exit_signal:exit_signal
+    }
+  end
+end
+
+
 Factor::Connector.service 'ssh' do
   action 'execute' do |params|
     host_param  = params['host']
@@ -43,21 +83,22 @@ Factor::Connector.service 'ssh' do
     fail 'Host variable must specific host address' unless host
 
     begin
+      return_info = []
       Net::SSH.start(host, user, ssh_settings) do |ssh|
         commands.each do |command|
           info "Executing '#{command}'"
-          output_lines = ssh.exec!(command)
+          output = ssh.exec_sc!(command)
           encode_settings = {
             invalid: :replace,
             undef: :replace,
             replace: '?'
           }
-          output_lines = output_lines.to_s.encode('UTF-8', encode_settings)
-          output << output_lines
-          command_lines << {
-            lines: output_lines.split("\n"),
-            all: output_lines
-          }
+
+          output[:stdout] = output[:stdout].to_s.encode('UTF-8', encode_settings).split("\n")
+          output[:stderr] = output[:stderr].to_s.encode('UTF-8', encode_settings).split("\n")
+          output[:command] = command
+          return_info << output
+          
         end
       end
     rescue Net::SSH::AuthenticationFailed
@@ -72,11 +113,6 @@ Factor::Connector.service 'ssh' do
     rescue
       warn 'Failed to clean up, but no worries, work will go on.'
     end
-    return_info = {
-      line: output.split("\n"),
-      all: output,
-      command: command_lines
-    }
     action_callback return_info
   end
 
