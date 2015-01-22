@@ -2,21 +2,21 @@ PATH
   remote: .
   specs:
     factor-connector-ssh (0.0.6)
-      factor-connector-api (~> 0.0.13)
+      factor-connector-api (~> 0.0.14)
       net-scp (~> 1.2.1)
-      net-ssh (~> 2.9.1)
+      net-ssh (~> 2.9.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
     celluloid (0.16.0)
       timers (~> 4.0.0)
-    factor-connector-api (0.0.13)
+    factor-connector-api (0.0.14)
       celluloid (~> 0.16.0)
     hitimes (1.2.2)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
-    net-ssh (2.9.1)
+    net-ssh (2.9.2)
     timers (4.0.1)
       hitimes
 
