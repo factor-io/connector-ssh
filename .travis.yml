@@ -9,7 +9,7 @@ rvm:
   - 2.2.2
 env:
   global:
-    - KEY_FILE_PATH=private.enc
+    - KEY_FILE_PATH=$TRAVIS_BUILD_DIR/private.enc
     - SANDBOX_HOST=sandbox.factor.io
     - secure: WmmVhTF/IjMCwtzSmGtRSt+7tAarS8zaTg96FwNN1Z01PISrjS4SbrZEQeZcM5Q/UYs4lXA+zIqQlovSU6uHKhtmc/Avr2fFMeXbxAS78eqrIq+ku1X9XJLh5mBu7xwXab5XacU4vYmZ/AXKNrTeQ0gYGe01XEhTdhnhLbdPZnc=
 before_install:
