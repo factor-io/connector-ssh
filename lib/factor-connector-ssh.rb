@@ -1,10 +1,10 @@
 require 'factor/connector/definition'
 
+require 'open-uri'
 require 'net/ssh'
 require 'net/scp'
 require 'tempfile'
 require 'securerandom'
-require 'uri'
 require 'net-ssh-command-ext'
 
 class SshConnectorDefinition < Factor::Connector::Definition
@@ -51,14 +51,12 @@ class SshConnectorDefinition < Factor::Connector::Definition
     begin
       return_info = []
       Net::SSH.start(host, user, ssh_settings) do |ssh|
-        # block.exec(ssh)
         block.yield(ssh)
       end
     rescue Net::SSH::AuthenticationFailed
       fail 'Authentication failure, check your SSH key, username, and host'
     rescue => ex
-      # fail "Couldn't connect to the server #{user}@#{host}:#{port || '22'}, please check credentials.", exception:ex
-      fail ex.message
+      fail "Failed to connect to the server"
     end
 
     info 'Cleaning up.'
@@ -99,56 +97,29 @@ class SshConnectorDefinition < Factor::Connector::Definition
   end
 
   action :upload do |params|
-    content = validate(params,:content,'Content')
-    path    = validate(params,:content,'Path')
-
-    source = nil
-    remote_directory = nil
+    content_uri = validate(params,:content,'Content')
+    path        = validate(params,:path,'Path')
+    content     = ''
 
     info 'Getting resource'
     begin
-      source = Tempfile.new('source')
-      source.write open(content).read
-      source.rewind
+      content = open(URI.parse(content_uri)).read.to_s
     rescue
-      fail 'Getting the resource failed'
+      fail "Couldn't download '#{content_uri}'"
     end
 
-    begin
-      trail = path[-1] == '/' ? '' : '/'
-      remote_directory = "#{path}#{trail}"
-    rescue
-      fail "The remote path '#{path}' was unparsable"
-    end
-    fail "The path #{remote_directory} must be an absolute path" if remote_directory[0] != '/'
+    fail "The path '#{path}' must be an absolute path" unless path[0] == '/'
+    fail "The path '#{path}' must be a file path" if path[-1] == '/'
 
     ssh_session params do |ssh|
-      source_path = File.absolute_path(source)
-
-      Zip::ZipFile.open(source_path) do |zipfile|
-        root_path = zipfile.first.name
-        zipfile.each do |file|
-          next unless file.file?
-          remote_zip_path  = file.name[root_path.length .. -1]
-          destination_path = "#{remote_directory}#{remote_zip_path}"
-          info "Uploading #{destination_path}"
-          file_contents = file.get_input_stream.read
-          string_io     = StringIO.new(file_contents)
-          zip_dir_path  = File.dirname(destination_path)
-          begin
-            ssh.exec!("mkdir #{zip_dir_path}")
-          rescue => ex
-            fail "couldn't create the directory #{zip_dir_path}", exception:ex
-          end
-          begin
-            ssh.scp.upload!(string_io, destination_path)
-          rescue => ex
-            fail "couldn't upload #{destination_path}", exception:ex
-          end
-        end
+      begin
+        string_io = StringIO.new(content)
+        ssh.scp.upload!(string_io, path)
+      rescue => ex
+        fail "Failed to upload: #{ex.message}"
       end
     end
-
-    respond
+    
+    respond source:content_uri, destination:path, status:'complete'
   end
 end

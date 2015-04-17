@@ -21,6 +21,10 @@ describe SshConnectorDefinition do
   end
 
   it ':: upload' do
-    # @runtime.run([:upload],{})
+    content = 'https://raw.githubusercontent.com/skierkowski/hello/master/README.md'
+    path = '/root/readme.md'
+    @runtime.run([:upload],{host:@host, private_key:@ssh_key, content:content, path:path})
+
+    expect(@runtime).to respond
   end
 end
