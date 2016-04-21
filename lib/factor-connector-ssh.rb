@@ -63,11 +63,11 @@ module SSH
       ssh_session @options do |ssh|
         return_info = commands.map do |cmd|
           exec(ssh,cmd) do |type, data|
-            info(data) if type==:stdout
-            error(data) if type==:stderr
+            info("  #{data}") if type==:stdout
+            error("  #{data}") if type==:stderr
             if type==:exit_code
-              success "Exit code: 0" if Integer(data)==0
-              error "Exit code: #{data}" if Integer(data)!=0
+              success "  Exit code: 0" if Integer(data)==0
+              error "  Exit code: #{data}" if Integer(data)!=0
             end
             trigger({type: type, data:data})
           end
