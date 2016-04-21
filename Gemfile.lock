@@ -18,7 +18,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    codeclimate-test-reporter (0.4.8)
+    codeclimate-test-reporter (0.5.0)
       simplecov (>= 0.7.1, < 1.0.0)
     commander (4.4.0)
       highline (~> 1.7.2)
@@ -32,20 +32,20 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (3.1.1)
     rainbow (2.1.0)
-    rake (10.4.2)
-    rspec (3.2.0)
-      rspec-core (~> 3.2.0)
-      rspec-expectations (~> 3.2.0)
-      rspec-mocks (~> 3.2.0)
-    rspec-core (3.2.3)
-      rspec-support (~> 3.2.0)
-    rspec-expectations (3.2.1)
+    rake (11.1.2)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.4)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-mocks (3.2.1)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.1)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-support (3.2.2)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     simplecov (0.11.2)
       docile (~> 1.1.0)
       json (~> 1.8)
@@ -56,11 +56,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  codeclimate-test-reporter (~> 0.4.7)
+  codeclimate-test-reporter (~> 0.5.0)
   factor!
   factor-connector-ssh!
-  rake (~> 10.4.2)
-  rspec (~> 3.2.0)
+  rake (~> 11.1.2)
+  rspec (~> 3.4.0)
 
 BUNDLED WITH
    1.11.2
