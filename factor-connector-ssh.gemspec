@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   
   s.require_paths = ['lib']
 
-  s.add_runtime_dependency 'net-ssh','~> 2.9.2'
+  s.add_runtime_dependency 'net-ssh','~> 3.1.1'
   s.add_runtime_dependency 'net-scp','~> 1.2.1'
 
   s.add_development_dependency 'codeclimate-test-reporter', '~> 0.4.7'
